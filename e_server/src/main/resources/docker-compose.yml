@@ -1,0 +1,122 @@
+version: '3.7'
+services:
+  
+  eureka-server:
+   
+    image: eureka-server:latest
+    ports:
+      - "8761:8761"
+    
+  microservice-1:
+    
+    image: microservice-1:latest
+    ports:
+      - "8085:8085"
+    depends_on:
+      
+      - eureka-server
+      
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka 
+    links:
+      - mongo 
+          
+     
+  microservice-2:
+    
+    image: microservice-2:latest
+    ports:
+      - "8086:8086"
+    depends_on:
+      
+      - eureka-server
+     
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka 
+    
+    links:
+      - mongo   
+      
+  
+  api-gateway:
+     image: api-gateway:latest
+     ports:
+      - "8999:8999"
+     depends_on: 
+      
+      - eureka-server
+      - microservice-1
+      - microservice-2
+     environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+   
+  mongo:
+    image: mongo:latest
+    container_name: "resources-mongo-1"
+    ports:
+      - 27017:27017
+
+
+
+
+
+
+# version: "3"
+
+
+# services: 
+#   api-gateway:
+#     image: api-gateway:latest
+#     ports:
+#      - "8999:8999"
+#     networks: 
+#        - current-network
+#     environment:
+#       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://localhost:8761/
+
+    
+#     mongo:
+#       image: mongo:latest
+#       container_name: mongodb
+#       ports:
+#        - "27017:27017"
+          
+          
+
+
+
+#   microservice-1:
+#     image: microservice-1:latest
+#     ports:
+#      - "8085:8085"
+#     depends_on:
+#      - eureka-server
+#     networks:
+#       - current-network
+#     environment:
+#       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://localhost:8761/
+
+
+#   microservice-2:
+#     image: microservice-2:latest
+#     ports:
+#      - "8086:8086"
+#     depends_on: 
+#      - eureka-server
+#     networks: 
+#      - current-network
+#     environment:
+#       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://localhost:8761/
+
+
+#   eureka-server:
+#     image: eureka-server:latest
+#     ports: 
+#       - "8761:8761"
+#     networks: 
+#       - current-network
+
+
+
+#   networks:
+#    - current-network
